@@ -15,6 +15,9 @@ volumes:
   gitea-runner:
     driver: local
     name: gitea-runner
+  gitea-proxy:
+    driver: local
+    name: gitea-proxy
 
 services:
   init-config:
@@ -36,6 +39,11 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
+      # - GITEA__server__DOMAIN=git.mochy.me
+      # - GITEA__server__ROOT_URL=https://git.mochy.me/
+      # - GITEA__server__SSH_DOMAIN=git.mochy.me
+      # - GITEA__server__SSH_PORT=3020
+      - GITEA__server__START_SSH_SERVER=false
       - GITEA__mailer__ENABLED=false
       - GITEA__database__DB_TYPE=mysql
       - GITEA__database__HOST=db:3306
@@ -56,7 +64,7 @@ services:
     networks:
       - gitea
     ports:
-      - "3010:3000"
+      # - "3010:3000"
       - "3020:22"
     depends_on:
       - init-config
@@ -102,3 +110,21 @@ services:
       - GITEA_RUNNER_REGISTRATION_TOKEN=${GITEA_RUNNER__REGISTRATION_TOKEN}
       - GITEA_RUNNER_NAME=DEFAULT
       - GITEA_RUNNER_EPHEMERAL=1
+
+  caddy:
+    image: caddy
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - server
+    volumes:
+      - ./config/GiteaProxy-Caddyfile:/etc/caddy/Caddyfile
+      - gitea-proxy:/data
+      - gitea-proxy:/config
+    networks:
+      - gitea
+    environment:
+      - CADDY_DOMAIN=${CADDY_DOMAIN}
