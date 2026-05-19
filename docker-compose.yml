@@ -104,7 +104,7 @@ services:
       - CONFIG_FILE=/data/config.yaml
       - GITEA_INSTANCE_URL=http://server:3000
       - GITEA_RUNNER_REGISTRATION_TOKEN=${GITEA_RUNNER__REGISTRATION_TOKEN}
-      - GITEA_RUNNER_NAME=DEFAULT
+      - GITEA_RUNNER_NAME=ubuntu
       - GITEA_RUNNER_EPHEMERAL=1
 
   caddy:
