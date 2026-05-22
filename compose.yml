@@ -28,7 +28,7 @@ services:
     command: >
       sh -c '
         if [ ! -f /data/gitea/.theme_initialized ]; then
-          cp -a /theme-src/. /data/gitea
+          cp -a /theme-src/*.css /data/gitea
           touch /data/gitea/.theme_initialized
         fi
       '
@@ -60,7 +60,7 @@ services:
     networks:
       - gitea
     ports:
-      # - "3010:3000"
+      - "3010:3000"
       - "3020:22"
     depends_on:
       - init-config
