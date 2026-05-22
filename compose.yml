@@ -124,3 +124,17 @@ services:
       - gitea
     environment:
       - CADDY_DOMAIN=${CADDY_DOMAIN}
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: gitea_cf_tunnel
+    command: tunnel run
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+        restart: true
+    environment:
+      - TUNNEL_TOKEN=${CF__TUNNEL_TOKEN}
+    networks:
+      - gitea
